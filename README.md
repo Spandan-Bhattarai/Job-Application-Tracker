@@ -13,6 +13,12 @@
 <div align="center">
   <h3>🚀 A modern, beautiful job application tracking system</h3>
   <p>Keep track of all your job applications in one place. Never lose an opportunity again.</p>
+  
+  <br />
+  
+  <a href="https://jobapptrack.vercel.app/">
+    <img src="https://img.shields.io/badge/🌐_Live_Demo-jobapptrack.vercel.app-blue?style=for-the-badge" alt="Live Demo" />
+  </a>
 </div>
 
 ---
@@ -28,12 +34,6 @@
 - **🌙 Dark Mode** - Beautiful dark mode support for comfortable viewing
 - **📱 Fully Responsive** - Works seamlessly on desktop, tablet, and mobile devices
 - **🔐 Secure Authentication** - Your data is protected with enterprise-grade security
-
-## 🖼️ Screenshots
-
-| Landing Page | Dashboard | Application Form |
-|:---:|:---:|:---:|
-| Modern landing with animations | Track all applications | Easy-to-use form |
 
 ## 🛠️ Tech Stack
 
@@ -126,36 +126,6 @@ npm run dev
 
 The app will be available at `http://localhost:5173`
 
-## 🌐 Deploying to Vercel
-
-### Option 1: Deploy via Vercel Dashboard
-
-1. Push your code to GitHub
-2. Go to [Vercel](https://vercel.com) and sign in
-3. Click "New Project" and import your repository
-4. Add Environment Variables:
-   - `VITE_NHOST_SUBDOMAIN` = your Nhost subdomain
-   - `VITE_NHOST_REGION` = your Nhost region
-5. Click "Deploy"
-
-### Option 2: Deploy via Vercel CLI
-
-```bash
-# Install Vercel CLI
-npm i -g vercel
-
-# Deploy
-vercel
-
-# Follow the prompts and add environment variables when asked
-```
-
-### Important Notes for Deployment
-
-- Make sure to add your Vercel deployment URL to Nhost's allowed redirect URLs
-- In Nhost Dashboard → Settings → Auth → Allowed Redirect URLs, add:
-  - `https://your-app.vercel.app`
-
 ## 📁 Project Structure
 
 ```
@@ -219,7 +189,7 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ## 👨‍💻 Developer
 
-Made with ❤️ by [Spandan](https://spandanb.com.np)
+Made by [Spandan](https://spandanb.com.np)
 
 ---
 
