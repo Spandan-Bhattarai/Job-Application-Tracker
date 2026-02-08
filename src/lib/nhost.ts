@@ -1,13 +1,16 @@
-import { createClient } from '@supabase/supabase-js';
+import { NhostClient } from '@nhost/react';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const nhostSubdomain = import.meta.env.VITE_NHOST_SUBDOMAIN;
+const nhostRegion = import.meta.env.VITE_NHOST_REGION;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+if (!nhostSubdomain || !nhostRegion) {
+  throw new Error('Missing Nhost environment variables');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const nhost = new NhostClient({
+  subdomain: nhostSubdomain,
+  region: nhostRegion,
+});
 
 // Types for our database tables
 export interface Application {

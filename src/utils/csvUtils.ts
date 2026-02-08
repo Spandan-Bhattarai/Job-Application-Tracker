@@ -1,5 +1,5 @@
 import Papa from 'papaparse';
-import { Application } from '../lib/supabase';
+import { Application } from '../lib/nhost';
 
 export function exportToCSV(applications: Application[]) {
   const csvData = applications.map(app => ({

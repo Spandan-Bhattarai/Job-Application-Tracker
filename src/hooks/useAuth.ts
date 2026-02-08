@@ -1,62 +1,98 @@
-import { useState, useEffect } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
+import { useSignInEmailPassword, useSignUpEmailPassword, useSignOut, useAuthenticationStatus, useUserData } from '@nhost/react';
 
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const { isAuthenticated, isLoading } = useAuthenticationStatus();
+  const user = useUserData();
+  
+  const { 
+    signInEmailPassword, 
+    isLoading: isSigningIn,
+    isError: signInError,
+    error: signInErrorDetails,
+    needsEmailVerification: signInNeedsVerification
+  } = useSignInEmailPassword();
+  
+  const { 
+    signUpEmailPassword, 
+    isLoading: isSigningUp,
+    isError: signUpError,
+    error: signUpErrorDetails,
+    needsEmailVerification: signUpNeedsVerification,
+    isSuccess: signUpSuccess
+  } = useSignUpEmailPassword();
+  
+  const { signOut: nhostSignOut } = useSignOut();
 
   const signIn = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { data, error };
+    const result = await signInEmailPassword(email, password);
+    
+    if (result.isError) {
+      return { 
+        data: null, 
+        error: { message: result.error?.message || 'Sign in failed' },
+        needsEmailVerification: false
+      };
+    }
+    
+    if (result.needsEmailVerification) {
+      return {
+        data: null,
+        error: { message: 'Please verify your email before signing in. Check your inbox.' },
+        needsEmailVerification: true
+      };
+    }
+    
+    return { data: result, error: null, needsEmailVerification: false };
   };
 
   const signUp = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-    return { data, error };
+    const result = await signUpEmailPassword(email, password);
+    
+    if (result.isError) {
+      return { 
+        data: null, 
+        error: { message: result.error?.message || 'Sign up failed' },
+        needsEmailVerification: false,
+        isSuccess: false
+      };
+    }
+    
+    // Check if email verification is needed
+    if (result.needsEmailVerification) {
+      return {
+        data: result,
+        error: null,
+        needsEmailVerification: true,
+        isSuccess: true
+      };
+    }
+    
+    return { 
+      data: result, 
+      error: null, 
+      needsEmailVerification: false,
+      isSuccess: true 
+    };
   };
 
   const signOut = async () => {
-    // Don't attempt to sign out if there's no active session
-    if (!session) {
+    if (!isAuthenticated) {
       return { error: null };
     }
     
-    const { error } = await supabase.auth.signOut();
-    return { error };
+    const result = await nhostSignOut();
+    if (result.isSuccess) {
+      return { error: null };
+    }
+    return { error: { message: 'Sign out failed' } };
   };
 
   return {
     user,
-    session,
-    loading,
+    session: isAuthenticated ? { user } : null,
+    loading: isLoading,
+    isSigningIn,
+    isSigningUp,
     signIn,
     signUp,
     signOut,
